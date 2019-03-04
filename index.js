@@ -605,12 +605,6 @@ function walk(total) {
         .then(parseJSON)
         .then(json => tag(json, cfg.tag))
         .then(json => addEntryFullURLs(json))
-        .then(json => {
-            if (APP.overwrite) {
-                FS.writeFileSync(src, JSON.stringify(json, null, 4), "utf8");
-            }
-            return json;
-        })
         // .then(json => addEntryFullURLs(json))
         .then(json => {
             if (APP.server && APP.validate) {
@@ -621,6 +615,12 @@ function walk(total) {
         .then(json => {
             if (APP.server && !APP.validate) {
                 return upload(json);
+            }
+            return json;
+        })
+        .then(json => {
+            if (APP.overwrite) {
+                FS.unlink(src, () => log("\nDeleting - file:" + src + "\n"));
             }
             return json;
         })
